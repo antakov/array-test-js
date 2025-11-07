@@ -55,8 +55,32 @@ var arr = [
   },
 ];
 
+function isPlainObject(v) {
+  return Object.prototype.toString.call(v) === '[object Object]';
+}
+
+function flattenEntry(obj) {
+  if (!isPlainObject(obj)) return obj;
+
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (isPlainObject(v)) {
+      const flat = flattenEntry(v);
+      for (const [ik, iv] of Object.entries(flat)) {
+        if (!(ik in out)) out[ik] = iv;
+      }
+    } else if (Array.isArray(v)) {
+      out[k] = v.slice();
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
+}
+
 function mutateArray(a) {
-    return a;
+  if (!Array.isArray(a)) return [];
+  return a.map(item => flattenEntry(item));
 }
 
 $(document).ready(function() {
