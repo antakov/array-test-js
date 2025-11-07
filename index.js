@@ -80,7 +80,23 @@ function flattenEntry(obj) {
 
 function mutateArray(a) {
   if (!Array.isArray(a)) return [];
-  return a.map(item => flattenEntry(item));
+
+  return a.map((item) => {
+    const flat = flattenEntry(item);
+
+    const result = {};
+    const totals = {};
+
+    for (const [key, val] of Object.entries(flat)) {
+      if (Array.isArray(val) && val.every((x) => typeof x === 'number' && Number.isFinite(x))) {
+        totals[`${key.split('_')[0]}_total`] = val.reduce((acc, n) => acc + n, 0);
+      } else {
+        result[key] = val;
+      }
+    }
+
+    return { ...result, ...totals };
+  });
 }
 
 $(document).ready(function() {
