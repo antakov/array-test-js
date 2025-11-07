@@ -81,8 +81,10 @@ function flattenEntry(obj) {
 function mutateArray(a) {
   if (!Array.isArray(a)) return [];
 
-  return a.map((item) => {
-    const flat = flattenEntry(item);
+  return a
+    .map((item) => flattenEntry(item))
+    .filter((flat) => String(flat.guest_type).toLowerCase() === 'guest')
+    .map((flat) => {
 
     const result = {};
     const totals = {};
