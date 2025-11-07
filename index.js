@@ -81,7 +81,7 @@ function flattenEntry(obj) {
 function mutateArray(a) {
   if (!Array.isArray(a)) return [];
 
-  return a
+  const guests = a
     .map((item) => flattenEntry(item))
     .filter((flat) => String(flat.guest_type).toLowerCase() === 'guest')
     .map((flat) => {
@@ -99,6 +99,14 @@ function mutateArray(a) {
 
     return { ...result, ...totals };
   });
+
+  guests.sort((a, b) => {
+    const ln = String(a.last_name ?? '').localeCompare(String(b.last_name ?? ''), 'en', { sensitivity: 'base' });
+    if (ln !== 0) return ln;
+    return String(a.first_name ?? '').localeCompare(String(b.first_name ?? ''), 'en', { sensitivity: 'base' });
+  });
+
+  return guests;
 }
 
 $(document).ready(function() {
